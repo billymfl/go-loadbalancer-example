@@ -25,9 +25,14 @@ func init() {
 		version: "1.0",
 		key:     os.Getenv("KEY"),
 		host:    os.Getenv("HOST"),
-		port:    os.Getenv("PORT")}
+		port:    os.Getenv("PORT"),
+		env:     os.Getenv("ENV")}
 
 	var errors []string
+
+	if config.env == "" {
+		config.env = "development"
+	}
 
 	if config.port == "" {
 		config.port = "80"
@@ -42,32 +47,32 @@ func init() {
 	}
 }
 
-// Getname returns app name
-func Getname() string {
+// Name returns app name
+func Name() string {
 	return config.name
 }
 
-// Getversion returns version
-func Getversion() string {
+// Version returns version
+func Version() string {
 	return config.version
 }
 
-// Getenv returns env
-func Getenv() string {
+// Env returns env
+func Env() string {
 	return config.env
 }
 
-// Getkey returns key
-func Getkey() string {
+// Key returns key
+func Key() string {
 	return config.key
 }
 
-// Getport returns env
-func Getport() string {
+// Port returns env
+func Port() string {
 	return config.port
 }
 
-// Gethost returns host
-func Gethost() string {
+// Host returns host
+func Host() string {
 	return config.host
 }

@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/billymfl/go-loadbalancer-example/config"
@@ -14,21 +13,17 @@ type Middleware func(http.HandlerFunc) http.HandlerFunc
 func Authenticated() Middleware {
 
 	// Create a new Middleware
-	return func(f http.HandlerFunc) http.HandlerFunc {
+	return func(next http.HandlerFunc) http.HandlerFunc {
 
 		// Define the http.HandlerFunc
 		return func(w http.ResponseWriter, r *http.Request) {
-
-			// Do middleware things
 			key := r.Header.Get("X-API-Key")
-			fmt.Println("key", key)
-			if key != "" && config.Getkey() != key {
-				http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-				return
-			}
 
-			// Call the next middleware/handler in chain
-			f(w, r)
+			if config.Key() != key {
+				http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+			} else {
+				next(w, r)
+			}
 		}
 	}
 }

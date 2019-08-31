@@ -8,15 +8,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type routerConfig struct {
-	path    string                                   // path
-	handler func(http.ResponseWriter, *http.Request) // handler func for path
-	methods []string                                 // methods allowed for path
+// Route is a path, handler and allowed methods for an endpoint
+type Route struct {
+	path    string                                   // endpoint path
+	handler func(http.ResponseWriter, *http.Request) // handler func for this path
+	methods []string                                 // methods allowed for this path
 	secure  bool                                     //if this path requires authenticated use
 }
 
-// RouterConfig configs the paths, handlers and methods for the paths
-var routerconfig = []*routerConfig{
+// Routes configs the paths, handlers and methods for endpoints
+var Routes = []*Route{
 	{"/", handlers.Root, []string{"GET"}, false},
 	{"/healthcheck", handlers.HealthCheck, []string{"GET"}, false},
 	{"/register/{name}/{cpus}/{rooms}/{version}", handlers.Register, []string{"PUT"}, true},
@@ -25,10 +26,10 @@ var routerconfig = []*routerConfig{
 // Router the mux router
 var Router = mux.NewRouter()
 
-// configure the Router's HandleFunc with our routerconfig
+// configure the Router's HandleFunc with our Routes
 func init() {
-	for _, route := range routerconfig {
-		var handler http.HandlerFunc
+	var handler http.HandlerFunc
+	for _, route := range Routes {
 		if route.secure {
 			handler = Chain(route.handler, Authenticated())
 		} else {

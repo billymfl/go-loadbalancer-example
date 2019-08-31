@@ -12,7 +12,7 @@ import (
 // Root returns app name and version
 // Get /
 func Root(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "%s %s", config.Getname(), config.Getversion())
+	fmt.Fprintf(w, "%s %s", config.Name(), config.Version())
 }
 
 // HealthCheck heartbeat
