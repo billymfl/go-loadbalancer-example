@@ -2,7 +2,6 @@ package util
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 )
 
@@ -85,7 +84,7 @@ func List() (string, error) {
 
 // Todo, use .Unix() to compare?
 func cleanup() {
-	fmt.Println("cleanup")
+	//fmt.Println("cleanup")
 	now := time.Now().UTC()
 	for url, cs := range servers {
 		timestamp := cs.Timestamp().Add(time.Second * time.Duration(timeout))
