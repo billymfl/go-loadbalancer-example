@@ -59,3 +59,13 @@ func List(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, data)
 	}
 }
+
+// Find returns the server with the most free capacity for the version requested
+// GET /find/{version}
+func Find(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	version := vars["version"]
+
+	server := util.Leastloaded(version)
+	fmt.Fprintf(w, `{"message": "%s"}`, server)
+}

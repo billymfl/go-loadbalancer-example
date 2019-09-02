@@ -24,6 +24,9 @@ var expected = []*Expect{
 	{200, "GET", "/healthcheck", `{"alive": true}`, false},
 }
 
+var URL = "room_name"
+var version = "v1.0"
+
 func TestStaticRoutes(t *testing.T) {
 	for _, exp := range expected {
 
@@ -36,10 +39,6 @@ func TestStaticRoutes(t *testing.T) {
 
 		// Check the status code is what we expect
 		checkstatus(rr.Code, exp.status, t)
-		// if status := rr.Code; status != exp.status {
-		// 	t.Errorf("%s returned wrong status code: got %v want %v",
-		// 		exp.path, status, exp.status)
-		// }
 
 		// Check the response body is what we expect.
 		if rr.Body.String() != exp.value {
@@ -51,7 +50,7 @@ func TestStaticRoutes(t *testing.T) {
 
 func TestRegisterWithoutAuth(t *testing.T) {
 	//set secure to false so api key header is not set
-	rr, req, err := request("PUT", "/register/room_name/8/0/v1.0", nil, false)
+	rr, req, err := request("PUT", fmt.Sprintf("/register/%s/8/0/%s", URL, version), nil, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,12 +59,27 @@ func TestRegisterWithoutAuth(t *testing.T) {
 }
 
 func TestRegisterWithAuth(t *testing.T) {
-	rr, req, err := request("PUT", "/register/room_name/8/0/v1.0", nil, true)
+	rr, req, err := request("PUT", fmt.Sprintf("/register/%s/8/0/%s", URL, version), nil, true)
 	if err != nil {
 		t.Fatal(err)
 	}
 	Router.ServeHTTP(rr, req)
 	checkstatus(rr.Code, http.StatusOK, t)
+}
+
+func TestFind(t *testing.T) {
+	rr, req, err := request("GET", fmt.Sprintf("/find/%s", version), nil, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	Router.ServeHTTP(rr, req)
+	checkstatus(rr.Code, http.StatusOK, t)
+
+	expected := fmt.Sprintf(`{"message": "%s"}`, URL)
+	if rr.Body.String() != expected {
+		t.Errorf("Find returned unexpected body: got %v want %v",
+			rr.Body.String(), expected)
+	}
 }
 
 func TestUnregister(t *testing.T) {

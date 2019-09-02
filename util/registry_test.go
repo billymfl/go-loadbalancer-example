@@ -39,20 +39,39 @@ func TestRegistry(t *testing.T) {
 
 	Register("http://server2.com", 16, 2, "1.1")
 
-	data := List()
+	data, err := List()
+	if err != nil {
+		t.Errorf("List() error %s", err)
+	}
 
 	result := make(map[string]interface{})
-	err := json.Unmarshal([]byte(data), &result)
+	err = json.Unmarshal([]byte(data), &result)
 	if err != nil {
 		t.Errorf("failed to unmarshal server data. %s", err)
 	}
 
-	if _, ok := result["http://server2.com"]; !ok {
-		t.Errorf("server %s not in list data", "http://server2.com")
+	url2 := "http://server2.com"
+	if _, ok := result[url2]; !ok {
+		t.Errorf("server %s not in list data", url2)
 	}
 
 	if _, ok := result[url]; !ok {
 		t.Errorf("server %s not in list data", url)
 	}
 
+	ll := Leastloaded("1.0")
+	if ll != url {
+		t.Errorf("Leastloaded returned %s, expected %s", ll, url)
+	}
+
+	ll = Leastloaded("1.1")
+	if ll != url2 {
+		t.Errorf("Leastloaded returned %s, expected %s", ll, url2)
+	}
+
+	// version that doesn't exist
+	ll = Leastloaded("2.1")
+	if ll != "" {
+		t.Errorf("Leastloaded returned %s, expected %s", ll, "")
+	}
 }

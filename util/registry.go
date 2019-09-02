@@ -83,6 +83,7 @@ func List() (string, error) {
 	return string(json), nil
 }
 
+// Todo, use .Unix() to compare?
 func cleanup() {
 	fmt.Println("cleanup")
 	now := time.Now().UTC()
@@ -97,4 +98,18 @@ func cleanup() {
 // Unregister removes a server
 func Unregister(url string) {
 	delete(servers, url)
+}
+
+// Leastloaded returns least loaded server for specified version
+func Leastloaded(version string) string {
+	max := 0
+	s := ""
+	for url, cs := range servers {
+		cap := cs.Capacity()
+		if cs.Version() == version && cap > max {
+			max = cap
+			s = url
+		}
+	}
+	return s
 }

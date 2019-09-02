@@ -23,6 +23,7 @@ var Routes = []*Route{
 	{"/register/{name}/{cpus}/{rooms}/{version}", handlers.Register, []string{"PUT"}, true},
 	{"/register/{name}", handlers.Unregister, []string{"DELETE"}, true},
 	{"/list", handlers.List, []string{"GET"}, true},
+	{"/find/{version}", handlers.Find, []string{"GET"}, true},
 }
 
 // Router the mux router
