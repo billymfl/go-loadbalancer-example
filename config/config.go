@@ -21,7 +21,7 @@ var config *Config
 
 func init() {
 	config = &Config{
-		name:    "Loadbalancer",
+		name:    "loadbalancer",
 		version: "1.0",
 		key:     os.Getenv("KEY"),
 		host:    os.Getenv("HOST"),

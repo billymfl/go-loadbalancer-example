@@ -7,6 +7,7 @@ import (
 
 	"github.com/billymfl/go-loadbalancer-example/config"
 	"github.com/billymfl/go-loadbalancer-example/router"
+	_ "github.com/billymfl/go-loadbalancer-example/util"
 )
 
 func main() {

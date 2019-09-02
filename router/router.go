@@ -21,6 +21,8 @@ var Routes = []*Route{
 	{"/", handlers.Root, []string{"GET"}, false},
 	{"/healthcheck", handlers.HealthCheck, []string{"GET"}, false},
 	{"/register/{name}/{cpus}/{rooms}/{version}", handlers.Register, []string{"PUT"}, true},
+	{"/register/{name}", handlers.Unregister, []string{"DELETE"}, true},
+	{"/list", handlers.List, []string{"GET"}, true},
 }
 
 // Router the mux router
@@ -28,21 +30,30 @@ var Router = mux.NewRouter()
 
 // configure the Router's HandleFunc with our Routes
 func init() {
+	Router.Use(defaults)
+
 	var handler http.HandlerFunc
 	for _, route := range Routes {
 		if route.secure {
-			handler = Chain(route.handler, Authenticated())
+			handler = chain(route.handler, Authenticated())
 		} else {
-			handler = Chain(route.handler)
+			handler = chain(route.handler)
 		}
 		Router.HandleFunc(route.path, handler).Methods(strings.Join(route.methods, ","))
 	}
 }
 
-// Chain applies middlewares to a http.HandlerFunc
-func Chain(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
+// chain applies middlewares to a http.HandlerFunc
+func chain(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 	for _, m := range middlewares {
 		f = m(f)
 	}
 	return f
+}
+
+func defaults(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
 }
