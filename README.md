@@ -4,3 +4,12 @@ Writing the NodeJS loadbalancer in golang to learn the language. So far it has h
 
 First go thru is learning go's idomatic way of doing things. Next is to use packages (ex, viper) for the env vars.
 
+Compile
+```bash
+go install $(echo $GOPATH)/src/github.com/billymfl/go-loadbalancer-example
+```
+
+Run
+```bash
+KEY=<KEY> $(echo $GOPATH)/bin/go-loadbalancer-example
+```
